@@ -31,9 +31,14 @@ def about():
 
 @app.route('/secure-page')
 @login_required
-def secure_page():
-    
+def secure_page():  
     return render_template('secure-page.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('Logout successful.', 'success')
+    return redirect(url_for('home'))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -62,7 +67,6 @@ def login():
                 return redirect(url_for("secure_page"))  # they should be redirected to a secure-page route instead
                 
             flash('Username or Password incorrect.', 'danger')
-            flash_errors(form)
     return render_template("login.html", form=form)
 
 
@@ -100,13 +104,6 @@ def page_not_found(error):
     """Custom 404 page."""
     return render_template('404.html'), 404
 
-def flash_errors(form):
-    for field, errors in form.errors.items():
-        for error in errors:
-            flash(u"Error in the %s field - %s" % (
-                getattr(form, field).label.text,
-                error
-            ), 'danger')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port="8080")
